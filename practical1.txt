@@ -1,0 +1,116 @@
+Partitioning
+List Partitioning
+create table Product
+(
+ prdno varchar(10),
+ prodname varchar(23),
+ rate number,
+ qty_available number
+)
+partition by list(prdno)
+(
+ partition pd1 values('p001','p002','p003','p004'),
+ partition pd2 values('b001','b002','b003','b004'),
+ partition pd3 values('c001','c002','c003','c004'),
+ partition pd4 values('d001','d002','d003','d004')
+);
+select * from user_tab_partitions where table_name ='PRODUCT';
+alter table product add partition PD5 values('f001','f002','f003','f004');
+alter table PRODUCT rename partition PD5 to PD6 ;
+alter table PRODUCT Modify partition PD6 add values('f005');
+Alter table PRODUCT Modify Partition PD6 Drop values('f005');
+select * from product partition(pd4)
+Alter table PRODUCT Merge Partitions PD3,PD6 into Partition
+PD8;
+Example 2:-
+Do the following:
+1. Create table Bank with fields BankId, BName, Location
+2. Partition the Bank table based on Location as per following.
+BK1 = (Mumbai, Pune, Nashik)
+BK2 = (Lucknow, Kanpur, Varanasi)
+BK3 = (Chandigarh, Mohali, Amritsar)
+BK4 = (GandhiNagar, Ahmedabad, Surat)
+3. Insert eight records in Bank table.
+4. Merge partition BK2 and BK3 as BK_New
+5. Display all records of partition BK_New.
+Create table Bank
+(
+Bank_ID number,
+Bank_Name varchar(32),
+loc varchar(52)
+)partition by list(loc)
+(
+partition bk1 values('Mumbai','Pune','Nasik'),
+partition bk2 values('Lucknow','Kanpur','Varansi'),
+partition bk3 values('Chandigardh','Mohali','Amritsar'),
+partition bk4 values('Gandhinagar','Ahemdabad','Surat')
+)
+insert into Bank values(1,'BOI','Mumbai');
+insert into Bank values(2,'ICICI','Pune');
+insert into Bank values(3,'PNB','Nasik');
+insert into Bank values(4,'BOM','Lucknow');
+insert into Bank values(5,'IngVyasa','Kanpur');
+insert into Bank values(6,'CB','Varansi');
+insert into Bank values(7,'BOB','Chandigardh');
+insert into Bank values(8,'BOA','Mohali');
+insert into Bank values(9,'BOG','Amritsar');
+insert into Bank values(10,'RBI','Gandhinagar');
+insert into Bank values(11,'BOD','Surat');
+alter table bank merge partitions bk2,bk3 into partition bk_new;
+select * from Bank partition(bk_new)
+RANGE PARTITIONING
+create table Accounts
+(
+acctno number,
+custname varchar(23),
+branch varchar(23),
+acctbal number
+)partition by range (acctbal)
+(
+partition p1 values less than (2000),
+partition p2 values less than (5000),
+partition p3 values less than (9999)
+);
+insert into Accounts values(1,'Sagar','Bhuvneshwar',5000);
+insert into Accounts values(2,'Arman','Fun Fiesta',9998);
+insert into Accounts values(3,'Shashikala','Airport',7000);
+insert into Accounts values(4,'Chutki','Bhuvneshwar',6000);
+insert into Accounts values(6,'Nancy','Bhuvneshwar',2000);
+insert into Accounts values(5,'Maansi','THANE',80);
+select * from Accounts;
+select * from Accounts partition (p1);
+SELECT* FROM ACCOUNTS PARTITION(P1);
+alter table Accounts merge Partitions p1,p2 into partition p6;
+alter table Accounts add partition p4 values less than (9999);
+select * from user_tab_partitions where table_name
+='ACCOUNTS';
+alter table Accounts drop partition p3;
+select * from Accounts where acctbal between 5000 and 7000;
+update Accounts set acctbal = acctbal+(acctbal*7/100) where
+acctbal<=100
+Example 2:-
+create table patient
+(
+patno varchar(10),
+pname varchar(20),
+opd_date date,
+charges number
+)partition by range(opd_date)
+(
+partition d1 values less than('01-jan-2008'),
+partition d2 values less than('31-Mar-2008'),
+partition d3 values less than('01-Apr-2008'),
+partition d4 values less than('30-jun-2008'),
+partition d5 values less than('01-jul-2008'),
+partition d6 values less than('30-sep-2008'),
+partition d7 values less than('01-oct-2008'),
+partition d8 value s less than('31-Dec-2008')
+)
+insert into patient values('p1', 'Anil','31-dec-2007',1000);
+insert into patient values('p2', 'Amit','31-jan-2008',2000);
+insert into patient values('p3', 'Aditya','26-mar-2008',3000);
+insert into patient values('p4', 'Upendra','30-may-2008',1500);
+insert into patient values('p5', 'Vrushali','30-jun-2008',4000);
+alter table Patient add partition d9 values less than ('31-jan2009')
+select * from patient where opd_date >='1-jan-2008' and
+opd_date <=' 26-mar-2008'; 

@@ -1,0 +1,119 @@
+ANALYTICAL FUNCTION
+RANK
+create table employee
+(
+empid varchar(10),
+empno varchar(20),
+deptno varchar(10),
+salary number(7)
+);
+insert into employee values('1000', 'Ajay singh', 'PD', 15000);
+insert into employee values('1001', 'Bharti Shetty', 'QC', 25000);
+insert into employee values('1002', 'sheetal Roy', 'PD', 35000);
+insert into employee values('1003', 'Meena Powar', 'Support',
+30000);
+insert into employee values('1004', 'Rajlakxhmi Pai', 'Support',
+40000);
+insert into employee values('1005', 'Vaibhav Vaidya', 'QC',
+50000);
+insert into employee values('1006', 'Nagveni', 'QC', 50000);
+insert into employee values('1007', 'Pramod jaiswal', 'QC',
+55000);
+select * from employee;
+select empid, deptno, salary, RANK() OVER (PARTITION BY
+deptno ORDER BY salary)"rank" from employee;
+DENSE_RANK
+select empid, deptno, salary, DENSE_RANK() OVER (PARTITION
+BY deptno ORDER BY salary)"rank" from employee;
+select empid, deptno, salary, DENSE_RANK() OVER (ORDER BY
+salary desc)"rank" from employee;
+Second Lowest Salary
+select a.empid ,a.deptno ,a.salary from
+(
+select empid,deptno,salary,
+dense_rank() over ( order by salary desc ) as rk
+from employee
+) a where a.rk=2
+3rd lowest salary
+select a.empid ,a.deptno ,a.salary from
+(
+select empid,deptno,salary,
+dense_rank() over ( order by salary ) as rk
+from employee
+) a where a.rk=3
+To view for deptno wise
+select a.empid ,a.deptno ,a.salary from
+(
+select empid,deptno,salary,
+dense_rank() over ( partition by deptno order by salary ) as rk
+from employee
+) a where a.rk=3
+LEAD
+select empid, deptno, salary, LEAD(salary, 1) OVER (ORDER BY
+salary) AS "NextSalary" from employee where deptno='QC';
+LAG
+select empid, deptno, salary, LAG(salary, 1) OVER (ORDER BY
+salary) AS "PreSalary" from employee where deptno='QC';
+select empid, deptno, salary, min(salary) KEEP (DENSE_RANK
+FIRST ORDER BY salary) OVER (PARTITION BY
+deptno)"Lowest",max(salary) KEEP (DENSE_RANK LAST ORDER
+BY salary) OVER (PARTITION BY deptno)"Highest" FROM
+employee ORDER BY deptno, salary;
+GROUP BY ,ROLLUP,CUBE
+The CUBE extension will generate subtotals for all combinations of the dimensions specified. If "n"
+is the number of columns listed in the CUBE, there will be 2n
+subtotal combinations.
+create table studet(Year char(10),rollno number,marks
+number);
+ insert into studet values('FY',1,200);
+ insert into studet values('FY',2,300);
+ insert into studet values('FY',3,250);
+ insert into studet values('SY',1,400);
+ insert into studet values('SY',2,200);
+ insert into studet values('SY',3,210);
+ insert into studet values('TY',1,350);
+ insert into studet values('TY',2,450);
+ insert into studet values('TY',3,500);
+SELECT year,rollno,sum(marks)
+FROM studet
+GROUP BY CUBE (year,rollno)
+ORDER BY year,rollno;
+SELECT year,rollno,sum(marks)
+FROM studet
+GROUP BY rollup (year,rollno)
+ORDER BY year,rollno;
+Unbounded Preceding and following
+select category ,Title , price, min(price) over (ORDER BY
+category ROWS BETWEEN UNBOUNDED PRECEDING AND 1
+PRECEDING)
+Min_BEFORE, MAX(price )over(ORDER BY category ROWS
+BETWEEN 1 FOLLOWING AND UNBOUNDED
+FOLLOWING)MAX_AFTER from catalog1;
+ABSTRACT DATA TYPES
+create or replace type ty_name as object
+( fname varchar(20), mname varchar(20), lname varchar(20) );
+create or replace type ty_address as object
+( street varchar(20), city varchar(20), pincode number(10));
+Create table customer_adbt
+( c_id number(5) primary key, c_name ty_name, c_add
+ty_address, c_phno number(10) );
+insert into customer_adbt values
+(2,ty_name('Akshay','A','Anpat'),ty_address('Marine
+Lines','Mumbai',400028),9820173925);
+insert into customer_adbt values
+(1,ty_name('Tushar','D','Kini'),ty_address('IIT
+Powai','Mumbai',400076),9892750112);
+insert into customer_adbt values
+(3,ty_name('Amkit','M','Kansara'),ty_address('Churhgate','Mumbai',400036),9899162616);
+select c.c_name.fname from customer_adbt c;
+select c.c_name.fname|| ' ' ||c.c_name.mname name from
+customer_adbt c;
+Altering Objects
+create or replace type ty_student1 as object ( rollno number(5), name varchar(20) );
+create table student_adbt1 of ty_student1;
+alter type ty_student1 add attribute
+( course varchar(5), feepaid number(6) ) cascade;
+insert into student_adbt1 values(3,'ccc','BCA',2000);
+insert into student_adbt1 values(4,'ddd','BMM',3000);
+insert into student_adbt1 values(5,'hhh','BCA',80000);
+insert into student_adbt1 values(6,'lll','BMM',30000);
