@@ -1,0 +1,106 @@
+Anaylatical function
+
+rank
+select <column names>, RANK() OVER (PARTITION BY <column name> ORDER BY <column name>)"rank" from <tablename>
+
+DENSE RANK
+select <column names>, DENSE_RANK() OVER (PARTITION BY <column name> ORDER BY <column name>)"rank" from <tablename>
+
+
+****LEAD****
+select empid, deptno, salary, LEAD(salary, 1) OVER (ORDER BY
+salary) AS "NextSalary" from employee where deptno='QC';
+
+*****LAG*******
+select empid, deptno, salary, LAG(salary, 1) OVER (ORDER BY
+salary) AS "PreSalary" from employee where deptno='QC';
+
+
+
+***********PARTITION**************
+
+create table <tablename>
+(
+	<columnname> datatype,
+	.
+	.
+	.
+)
+partition by list(<columnname>)
+(
+	partition <partitionName> values (<partitionSample>),
+	,
+	,
+	,
+);
+
+VIEW TABLE PARTITION
+
+select * from user_tab_partitions where table_name = "<tableName>";
+
+ALTER PARTITIONS
+-ADD PARTITIONS
+alter table <tableName> add partition <partitionName> values (...);
+
+-RENAME PARTITION
+alter table <tableName> rename partition <oldPartitionName> to <NewPartitionName>;
+
+--Modify values 
+-ADD Values
+alter table <tablename> Modify partition <partitionName> add values('');
+
+-DROP VALUES
+alter table <tableName> Modify partition <partitionName> drop values('');
+
+-COMBINE PARTITION
+alter table <tableName> Merge partitions <partitionNames..>into Partition <newpartitionName>;
+
+
+*******RANGE PARTITION**************
+create table <tablename>
+(
+	columnName datatype,
+	.
+	.
+	.
+)
+partition by range(columnName)
+(
+	partition <partitionName> values <less than || greater than> (values),
+	.
+	.
+	.
+);
+
+View Partitions
+select * from user_tab_partitions where table_name = "<tableName>"
+select * from partition (<partitionName>);
+
+ABSTRACT DATA TYPES
+
+create or replace type <type-name> as object
+(
+	 <column name> varchar(20),
+	 .
+	 .
+	 .
+);
+
+create table <table-name>
+(
+	<columnName> <type-name>,
+	.
+	.
+	
+);
+
+ALTER TYPE NAME
+alter type <type-name> add attribute
+(
+	<column> datatype,
+	.
+	.
+	.
+);
+
+
